@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+    "name": "ThunderScamDetector",
+    "description": "Prosta wtyczka do Thunderbirda wykrywająca próby socjotechniczne do pobrania załącznika z wirusem.",
+    "version": "0.1",
+    "author": "Patryk Gensch",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "admin@genszu.cba.pl",
+            "strict_min_version": "78.0"
+        }
+    },
+    "browser_action": {
+        "default_popup": "mainPopup/popup.html",
+        "default_title": "ThunderScamDetector",
+        "default_icon": "images/ThunderScamDetector.png"
+    },
+    "icons": {
+        "64": "images/ThunderScamDetector-64px.png",
+        "32": "images/ThunderScamDetector-32px.png",
+        "16": "images/ThunderScamDetector-16px.png"
+    }
+}
