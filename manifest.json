@@ -28,7 +28,10 @@
         "<all_urls>"
     ],
     "background": {
-        "scripts": ["scripts/background.js"]
+        "scripts": [
+            "scripts/background.js",
+            "scripts/scamChecker.js"
+        ]
     },
     "icons": {
         "64": "images/ThunderScamDetector-64px.png",

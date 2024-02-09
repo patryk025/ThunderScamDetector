@@ -1,3 +1,8 @@
+async function getMessage(messageId) {
+    let fullMessage = await messenger.messages.getFull(messageId);
+    return fullMessage;
+}
+
 (async function() {
     console.log("Initializing ThunderScamDetector");
     messenger.messageDisplayScripts.register({
@@ -36,7 +41,9 @@
 
         switch (message.command) {
             case "checkIfIsScamOrVirus":
-                return { isScamOrVirus: true, indicators: ["test"] };
+                const messageBody = await getMessage(messageHeader.id);
+                result = await scamChecker(messageBody, sender);
+                return result;
         }
     }
     console.log("ThunderScamDetector initialized");
