@@ -6,7 +6,7 @@
     "author": "Patryk Gensch",
     "browser_specific_settings": {
         "gecko": {
-            "id": "admin@genszu.cba.pl",
+            "id": "thunderscamdetector@beta",
             "strict_min_version": "78.0"
         }
     },
@@ -14,6 +14,21 @@
         "default_popup": "mainPopup/popup.html",
         "default_title": "ThunderScamDetector",
         "default_icon": "images/ThunderScamDetector.png"
+    },
+    "permissions": [
+        "messagesRead",
+        "messagesModify",
+        "accountsRead",
+        "storage",
+        "menus",
+        "notifications",
+        "scripting",
+        "activeTab",
+        "tabs",
+        "<all_urls>"
+    ],
+    "background": {
+        "scripts": ["scripts/background.js"]
     },
     "icons": {
         "64": "images/ThunderScamDetector-64px.png",
