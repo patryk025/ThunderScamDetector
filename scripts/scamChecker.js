@@ -50,6 +50,19 @@ function getMessageText(messagePart, html = false) {
     }
 }
 
+function parseAddressField(addressField) {
+    console.log(addressField);
+    const regex = /"?([^"]+)"?\s<([^>]+)>/;
+    const match = addressField.match(regex);
+    if (match) {
+        const senderName = match[1];
+        const email = match[2];
+        return { senderName, email };
+    } else {
+        return { senderName: "", email: addressField };
+    }
+}
+
 async function scamChecker(messageId, sender) {
     let result = { isScamOrVirus: false, indicators: [] };
 
@@ -68,11 +81,24 @@ async function scamChecker(messageId, sender) {
         "compressed": "wykryto skompresowane archiwum, zalecana ostrożność",
         "office_makro": "wykryto dokumenty stworzone w pakiecie biurowym z włączoną obsługą makr",
         "extension_mangling": "wykryto próbę ukrycia prawdziwego rozszerzenia pliku (plik zakończony na {extension})",
-        "deceptive_links": "wykryto linki wprowadzające w błąd, kierujące w inne miejsce, niż opisane"
+        "deceptive_links": "wykryto linki wprowadzające w błąd, kierujące w inne miejsce, niż opisane",
+        "reply_domain_difference": "wykryto użycie \"Odpowiedź do\" kierującą odpowiedzi na skrzynkę pocztową znajdującą się w innej domenie",
+        "sender_name_difference": "wykryto różnicę w nazwie nadawcy oraz osoby do odpowiedzi",
+        "suspicious_tld": "wykryto wykorzystanie maila z serwera pocztowego z podejrzanej domeny najwyższego poziomu (końcówka adresu {tld})"
     };
+    // list from https://trends.netcraft.com/cybercrime/tlds
+    let suspiciousTopLevelDomains = [
+        ".shop", ".top", ".cfd", ".ltd", ".autos", ".monster", ".club", ".trade", ".to", ".xyz", ".lol", ".bd", ".live", ".beauty", 
+        ".ng", ".id", ".th", ".pk", ".life", ".su", ".pics", ".pro", ".network", ".sk", ".sa", ".best", ".cloud", ".asia", ".cc", 
+        ".lk", ".ink", ".icu", ".pe", ".mx", ".digital", ".com", ".tw", ".in", ".link", ".ae", ".br", ".vn", ".ru", ".ke", ".rs", 
+        ".tr", ".cl", ".lat", ".ar", ".vip"
+    ];
 
     const messageBody = await getMessage(messageId);
     const attachments = await getAttachments(messageId);
+
+    const from = messageBody.headers.from;
+    const replyTo = messageBody.headers["reply-to"];
 
     var messageTextHTML = getMessageText(messageBody, true);
     var messagePlainText = getMessageText(messageBody);
@@ -110,7 +136,38 @@ async function scamChecker(messageId, sender) {
         }
     }
 
+    
+    const parsedFromAddress = parseAddressField(from[0]);
+    const fromAddressDomain = parsedFromAddress.email.split("@")[1];
+    const fromTLD = fromAddressDomain.split(".");
 
+    // analyze sender and reply to
+    if(replyTo) {
+        const parsedReplyToAddress = parseAddressField(replyTo[0]);
+        const replyToAddressDomain = parsedReplyToAddress.email.split("@")[1];
+
+        if(fromAddressDomain != replyToAddressDomain) {
+            score += 2;
+            result.indicators.push(descriptionMessages["reply_domain_difference"]);
+        }
+
+        if(parsedFromAddress.senderName != parsedReplyToAddress.senderName) {
+            score += 1;
+            result.indicators.push(descriptionMessages["sender_name_difference"]);
+        }
+    }
+
+    var scorePerElem = 1.5/suspiciousTopLevelDomains.length;
+
+    for(var i = 0; i < suspiciousTopLevelDomains.length; i++) {
+        if(fromTLD[fromTLD.length - 1] == suspiciousTopLevelDomains[i]) {
+            score += 2 - i * scorePerElem;
+            result.indicators.push(descriptionMessages["suspicious_tld"]);
+            break;
+        }
+    }
+
+    console.log(score);
 
     if(score > detectionThreshold) {
         result.isScamOrVirus = true;

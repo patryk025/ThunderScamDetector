@@ -11,13 +11,16 @@ async function showBanner() {
     }
     const banner = document.createElement("div");
     banner.className = "thunderbirdDangerMessage";
-    if (isScamOrVirus == null) {
-        banner.className = "thunderbirdWarningMessage";
-    }
 
     const bannerText = document.createElement("div");
     bannerText.className = "thunderbirdDangerMessage_Text";
-    bannerText.innerText = "Ta wiadomość prawdopodobnie jest próbą ataku. Wskazują na to następujące rzeczy: " + indicators.join("; ") + ". Skonsultuj tego maila z administratorami.";
+    if (isScamOrVirus == null) {
+        banner.className = "thunderbirdWarningMessage";
+        bannerText.innerText = "Skonsultuj tego maila z administratorami. Ta wiadomość może być próbą ataku socjotechnicznego. Wskazują na to następujące rzeczy: " + indicators.join("; ") + ".";
+    }
+    else {
+        bannerText.innerText = "Skonsultuj tego maila z administratorami. Ta wiadomość prawdopodobnie jest próbą ataku. Wskazują na to następujące rzeczy: " + indicators.join("; ") + ".";
+    }
 
     banner.appendChild(bannerText);
 
