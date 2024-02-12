@@ -1,4 +1,4 @@
-.thunderbirdMessageDisplayActionExample {
+.thunderbirdDangerMessage {
     background-color: #d70022;
     color: white;
     font-weight: 400;
@@ -6,7 +6,16 @@
     margin-bottom: 0.25rem;
     display: flex;
   }
+
+  .thunderbirdWarningMessage {
+    background-color: #d7c100;
+    color: white;
+    font-weight: 400;
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+  }
   
-  .thunderbirdMessageDisplayActionExample_Text {
+  .thunderbirdDangerMessage_Text {
     flex-grow: 1;
   }

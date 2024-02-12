@@ -6,15 +6,18 @@ async function showBanner() {
 
     const { isScamOrVirus, indicators } = scanStatus;
 
-    if (!isScamOrVirus) {
+    if (isScamOrVirus == false) {
         return;
     }
     const banner = document.createElement("div");
-    banner.className = "thunderbirdMessageDisplayActionExample";
+    banner.className = "thunderbirdDangerMessage";
+    if (isScamOrVirus == null) {
+        banner.className = "thunderbirdWarningMessage";
+    }
 
     const bannerText = document.createElement("div");
-    bannerText.className = "thunderbirdMessageDisplayActionExample_Text";
-    bannerText.innerText = "Ta wiadomość prawdopodobnie jest próbą ataku. Wskazują na to następujące rzeczy: " + indicators.join(", ") + ". Skonsultuj tego maila z administratorami.";
+    bannerText.className = "thunderbirdDangerMessage_Text";
+    bannerText.innerText = "Ta wiadomość prawdopodobnie jest próbą ataku. Wskazują na to następujące rzeczy: " + indicators.join("; ") + ". Skonsultuj tego maila z administratorami.";
 
     banner.appendChild(bannerText);
 
